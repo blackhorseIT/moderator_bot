@@ -1,0 +1,9 @@
+bot.log
+.DS_Store
+.git
+*.pyc
+__pycache__
+.env
+# Игнорируем сам Dockerfile и .dockerignore на всякий случай
+Dockerfile
+.dockerignore
