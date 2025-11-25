@@ -1,13 +1,25 @@
 import os
-from config import PHRASES_FILE
+from config import BANNED_PHRASES_FILE, BANNED_WORDS_IMAGE_FILE
 
 class PhraseManager:
-    def __init__(self):
-        self.phrases_file = PHRASES_FILE
+    def __init__(self, file_type="text"):
+        """
+        file_type: "text" - для текстовых фраз, "image" - для слов на картинках
+        """
+        self.file_type = file_type
+        if file_type == "image":
+            self.phrases_file = BANNED_WORDS_IMAGE_FILE
+        else:
+            self.phrases_file = BANNED_PHRASES_FILE
+            
         self.banned_phrases = self.load_banned_phrases()
 
     def load_banned_phrases(self):
-        """Загрузка запрещенных фраз из файла"""        
+        """Загрузка запрещенных фраз из файла"""
+        # Создаем файл, если он не существует
+        if not os.path.exists(self.phrases_file):
+            open(self.phrases_file, 'w', encoding='utf-8').close()
+
         with open(self.phrases_file, 'r', encoding='utf-8') as f:
             phrases = [line.strip() for line in f if line.strip()]
             return phrases
@@ -32,10 +44,11 @@ class PhraseManager:
 
     def remove_phrase(self, phrase):
         """Удаление фразы"""
-        if phrase in self.banned_phrases:
-            self.banned_phrases.remove(phrase)
-            self.save_banned_phrases(self.banned_phrases)
-            return True  # Фраза успешно удалена
+        for existing_phrase in self.banned_phrases:
+            if existing_phrase.lower() == phrase.strip().lower():
+                self.banned_phrases.remove(existing_phrase)
+                self.save_banned_phrases(self.banned_phrases)
+                return True  # Фраза успешно удалена
         return False  # Фразы не было в списке
 
     def get_phrases(self):

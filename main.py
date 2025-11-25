@@ -2,7 +2,7 @@ import logging
 from config import setup_logging, TOKEN
 from telegram import Update
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
-from handlers.message_handlers import delete_message
+from handlers.message_handlers import handle_message
 from handlers.command_handlers import get_command_handlers
 
 def main():
@@ -22,8 +22,13 @@ def main():
         
         # Добавляем обработчик сообщений для групп
         application.add_handler(MessageHandler(
-            filters.TEXT | filters.CAPTION,
-            delete_message
+            filters.ChatType.GROUPS & (
+                filters.TEXT | 
+                filters.CAPTION | 
+                filters.PHOTO | 
+                filters.Document.IMAGE
+            ),
+            handle_message
         ))
         
         print("Бот запущен...")
