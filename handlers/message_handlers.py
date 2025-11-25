@@ -7,6 +7,12 @@ from telegram.ext import ContextTypes
 from telegram.error import BadRequest, Forbidden
 from utils.phrase_manager import PhraseManager
 from utils.chat_actions import delete_message, ban_user
+from config import TESSERACT_PATH
+
+if TESSERACT_PATH:
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
+else:
+    print("Предупреждение: Tesseract не найден. Распознавание текста с картинок отключено.")
 
 # Инициализация менеджеров фраз
 text_phrase_manager = PhraseManager("text")
